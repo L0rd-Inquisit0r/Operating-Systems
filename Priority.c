@@ -98,17 +98,34 @@ void findAvgTime(Process proc[], int n){
 }
 
 // Function to print Gantt Chart
-void printGanttChart(Process proc[], int n){
-    printf("\nGantt Chart:\n");
-    for (int i = 0; i < n; i++){
-        printf("| P%d ", proc[i].id);
-    }
-    printf("|\n");
-
+void printGanttChart(Process proc[], int n) {
     int time = 0;
-    for (int i = 0; i < n; i++){
+
+    printf("\nGantt Chart:\n");
+
+    // Print top border with process IDs
+    for (int i = 0; i < n; i++) {
+        printf(" -------");
+    }
+    printf("\n|");
+
+    for (int i = 0; i < n; i++) {
+        printf("  P%d   |", proc[i].id);
+    }
+    printf("\n");
+
+    // Print bottom border
+    for (int i = 0; i < n; i++) {
+        printf(" -------");
+    }
+    printf("\n");
+
+    // Print time intervals below each process
+    time = 0;
+    printf("%d", time);
+    for (int i = 0; i < n; i++) {
         time += proc[i].burst_time;
-        printf("%5d ", time);
+        printf("%8d", time);
     }
     printf("\n");
 }
