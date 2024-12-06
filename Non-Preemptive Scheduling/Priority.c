@@ -13,6 +13,7 @@ typedef struct process{
 void sortProcesses(Process proc[], int n);
 void findWaitingTime(Process proc[], int n);
 void findTurnAroundTime(Process proc[], int n);
+void displayTable(Process proc[], int n); 
 void findAvgTime(Process proc[], int n);
 void printGanttChart(Process proc[], int n);
 
@@ -45,6 +46,7 @@ int main(){
 
     findWaitingTime(proc, n);
     findTurnAroundTime(proc, n);
+    displayTable(proc, n);
     findAvgTime(proc, n);
     printGanttChart(proc, n);
 
@@ -81,6 +83,16 @@ void findWaitingTime(Process proc[], int n){
 void findTurnAroundTime(Process proc[], int n){
     for (int i = 0; i < n; i++){
         proc[i].turnaround_time = proc[i].burst_time + proc[i].waiting_time;
+    }
+}
+
+void displayTable(Process proc[], int n){
+    printf("\nProcess\tArrival Time\tBurst Time\tCompletion Time\tTurnaround Time\tWaiting Time\tPriority\n");
+    for (int i = 0; i < n; i++) {
+        printf("P%d\t%d\t\t%d\t\t%d\t\t%d\t\t%d\t\t%d\n",
+               proc[i].id, proc[i].arrival_time, proc[i].burst_time,
+               proc[i].completion_time, proc[i].turnaround_time, 
+               proc[i].waiting_time,proc[i].priority);
     }
 }
 
