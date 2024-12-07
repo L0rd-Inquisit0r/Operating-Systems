@@ -13,7 +13,7 @@ typedef struct process {
 void roundRobinScheduling(Process proc[], int n, int time_quantum);
 void displayTable(Process proc[], int n);
 void findavgTime(Process proc[], int n);
-void printGanttChart(int gantt_chart[], int gc_size, int time_quantum, Process proc[]);
+void printGanttChart(int gantt_chart[], int exec_times[], int gc_size);
 
 int main() {
     int n, time_quantum;
@@ -41,9 +41,9 @@ int main() {
 }
 
 void roundRobinScheduling(Process proc[], int n, int time_quantum) {
-    int time = 0, completed = 0, gantt_chart[1000], gc_index = 0;
-    int queue[1000], front = 0, rear = 0; // Queue for ready processes
-    int visited[n]; // To track if a process is added to the queue
+    int time = 0, completed = 0, gantt_chart[1000], exec_times[1000], gc_index = 0;
+    int queue[1000], front = 0, rear = 0;
+    int visited[n];
     for (int i = 0; i < n; i++) visited[i] = 0;
 
     // Sort by arrival time
@@ -57,50 +57,41 @@ void roundRobinScheduling(Process proc[], int n, int time_quantum) {
         }
     }
 
-    // Add the first process to the queue
-    queue[rear++] = 0; // Add the first process index to the queue
+    queue[rear++] = 0; 
     visited[0] = 1;
 
     while (completed < n) {
         if (front < rear) {
-            int idx = queue[front++]; // Dequeue process
-            gantt_chart[gc_index++] = proc[idx].id;
+            int idx = queue[front++]; 
+            gantt_chart[gc_index] = proc[idx].id;
 
-            if (proc[idx].remaining_time <= time_quantum) {
-                time += proc[idx].remaining_time;
+            int exec_time = (proc[idx].remaining_time <= time_quantum)
+                            ? proc[idx].remaining_time
+                            : time_quantum;
+
+            time += exec_time;
+            exec_times[gc_index++] = exec_time;
+
+            proc[idx].remaining_time -= exec_time;
+
+            if (proc[idx].remaining_time == 0) {
                 proc[idx].completion_time = time;
-                proc[idx].remaining_time = 0;
                 completed++;
-
-                // Add newly arrived processes to the queue
-                for (int i = 0; i < n; i++) {
-                    if (!visited[i] && proc[i].arrival_time <= time && proc[i].remaining_time > 0) {
-                        queue[rear++] = i;
-                        visited[i] = 1;
-                    }
-                }
-            } else {
-                time += time_quantum;
-                proc[idx].remaining_time -= time_quantum;
-
-                // Add newly arrived processes to the queue
-                for (int i = 0; i < n; i++) {
-                    if (!visited[i] && proc[i].arrival_time <= time && proc[i].remaining_time > 0) {
-                        queue[rear++] = i;
-                        visited[i] = 1;
-                    }
-                }
-                queue[rear++] = idx; // Requeue the current process
             }
-        } else {
-            time++; // Idle time
-            // Check if any new process arrives
+
+            // Add new processes
             for (int i = 0; i < n; i++) {
                 if (!visited[i] && proc[i].arrival_time <= time && proc[i].remaining_time > 0) {
                     queue[rear++] = i;
                     visited[i] = 1;
                 }
             }
+
+            if (proc[idx].remaining_time > 0) {
+                queue[rear++] = idx; 
+            }
+        } else {
+            time++; 
         }
     }
 
@@ -110,7 +101,7 @@ void roundRobinScheduling(Process proc[], int n, int time_quantum) {
         proc[i].waiting_time = proc[i].turnaround_time - proc[i].burst_time;
     }
 
-    printGanttChart(gantt_chart, gc_index, time_quantum, proc);
+    printGanttChart(gantt_chart, exec_times, gc_index);
 }
 
 void displayTable(Process proc[], int n) {
@@ -134,7 +125,7 @@ void findavgTime(Process proc[], int n) {
     printf("Average turnaround time: %.2f\n", (float)total_tat / n);
 }
 
-void printGanttChart(int gantt_chart[], int gc_size, int time_quantum, Process proc[]) {
+void printGanttChart(int gantt_chart[], int exec_times[], int gc_size) {
     printf("\nGantt Chart:\n");
 
     // Print the top border
@@ -155,18 +146,12 @@ void printGanttChart(int gantt_chart[], int gc_size, int time_quantum, Process p
     }
     printf("\n");
 
-    // Print the time intervals below each process
+    // Print time intervals below each process
     int time = 0;
     printf("%d", time); // Print the initial time (0)
     for (int i = 0; i < gc_size; i++) {
-        int current_process_id = gantt_chart[i] - 1; // Adjusting for zero-based index
-        int exec_time = proc[current_process_id].burst_time;
-
-        // For Round Robin, we use the minimum of time quantum or remaining burst time
-        int time_spent = (exec_time <= time_quantum) ? exec_time : time_quantum;
-        time += time_spent; // Increment time by the actual time spent on the process
-
-        printf("%8d", time); // Print time after each process slice
+        time += exec_times[i]; // Add actual execution time for each process slice
+        printf("%8d", time); 
     }
     printf("\n");
 }
