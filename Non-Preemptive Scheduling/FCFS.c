@@ -46,7 +46,12 @@ int main(){
             proc[i].completion_time = proc[i].arrival_time + proc[i].burst_time;
         }
         else{
-            proc[i].completion_time = proc[i - 1].completion_time + proc[i].burst_time;
+            // If the arrival time of the current process is less than or equal to the completion time of the previous process
+            if (proc[i].arrival_time <= proc[i - 1].completion_time) {
+                proc[i].completion_time = proc[i - 1].completion_time + proc[i].burst_time;
+            } else {
+                proc[i].completion_time = proc[i].arrival_time + proc[i].burst_time;
+            }
         }
     }
 
@@ -63,9 +68,11 @@ void findWaitingTime(Process proc[], int n){
     proc[0].waiting_time = 0;
 
     for (int i = 1; i < n; i++){
-        proc[i].waiting_time = proc[i - 1].completion_time - proc[i].arrival_time;
-        if (proc[i].waiting_time < 0){
-            proc[i].waiting_time = 0; // If process arrives after previous process completes
+        // If the process arrives after the previous process finishes, it doesn't wait
+        if (proc[i].arrival_time >= proc[i - 1].completion_time) {
+            proc[i].waiting_time = 0;
+        } else {
+            proc[i].waiting_time = proc[i - 1].completion_time - proc[i].arrival_time;
         }
     }
 }
