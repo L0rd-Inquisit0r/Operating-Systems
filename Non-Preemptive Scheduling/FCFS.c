@@ -16,22 +16,22 @@ void findavgTime(Process proc[], int n);
 void printGanttChart(Process proc[], int n);
 
 int main(){
-    int n;
+    int i, j, n;
 
     printf("Enter the number of processes: ");
     scanf("%d", &n);
 
     Process proc[n];
 
-    for (int i = 0; i < n; i++){
+    for (i = 0; i < n; i++){
         proc[i].id = i + 1; // Process ID starts from 1
         printf("Enter arrival time and burst time for Process %d: ", proc[i].id);
         scanf("%d %d", &proc[i].arrival_time, &proc[i].burst_time);
     }
 
     // Sorting processes by arrival time (FCFS)
-    for (int i = 0; i < n - 1; i++){
-        for (int j = 0; j < n - i - 1; j++){
+    for (i = 0; i < n - 1; i++){
+        for (j = 0; j < n - i - 1; j++){
             if (proc[j].arrival_time > proc[j + 1].arrival_time){
                 Process temp = proc[j];
                 proc[j] = proc[j + 1];
@@ -41,7 +41,7 @@ int main(){
     }
 
     // Calculate completion time
-    for (int i = 0; i < n; i++){
+    for (i = 0; i < n; i++){
         if (i == 0){
             proc[i].completion_time = proc[i].arrival_time + proc[i].burst_time;
         }
@@ -65,9 +65,10 @@ int main(){
 }
 
 void findWaitingTime(Process proc[], int n){
+	int i;
     proc[0].waiting_time = 0;
 
-    for (int i = 1; i < n; i++){
+    for (i = 1; i < n; i++){
         // If the process arrives after the previous process finishes, it doesn't wait
         if (proc[i].arrival_time >= proc[i - 1].completion_time) {
             proc[i].waiting_time = 0;
@@ -78,14 +79,16 @@ void findWaitingTime(Process proc[], int n){
 }
 
 void findTurnAroundTime(Process proc[], int n){
-    for (int i = 0; i < n; i++){
+	int i;
+    for (i = 0; i < n; i++){
         proc[i].turnaround_time = proc[i].burst_time + proc[i].waiting_time;
     }
 }
 
 void displayTable(Process proc[], int n){
+	int i;
     printf("\nProcess\tArrival Time\tBurst Time\tCompletion Time\tTurnaround Time\tWaiting Time\n");
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         printf("P%d\t%d\t\t%d\t\t%d\t\t%d\t\t%d\n",
                proc[i].id, proc[i].arrival_time, proc[i].burst_time,
                proc[i].completion_time, proc[i].turnaround_time, proc[i].waiting_time);
@@ -94,8 +97,9 @@ void displayTable(Process proc[], int n){
 
 void findavgTime(Process proc[], int n){
     int total_wt = 0, total_tat = 0;
-
-    for (int i = 0; i < n; i++){
+	int i;
+	
+    for (i = 0; i < n; i++){
         total_wt += proc[i].waiting_time;
         total_tat += proc[i].turnaround_time;
     }
@@ -106,23 +110,24 @@ void findavgTime(Process proc[], int n){
 
 // Function to print Gantt Chart
 void printGanttChart(Process proc[], int n) {
+	int i;
     int time = 0;
 
     printf("\nGantt Chart:\n");
 
     // Print top border with process IDs
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         printf(" -------");
     }
     printf("\n|");
 
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         printf("  P%d   |", proc[i].id);
     }
     printf("\n");
 
     // Print bottom border
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         printf(" -------");
     }
     printf("\n");
@@ -130,7 +135,7 @@ void printGanttChart(Process proc[], int n) {
     // Print time intervals below each process
     time = 0;
     printf("%d", time);
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         time += proc[i].burst_time;
         printf("%8d", time);
     }

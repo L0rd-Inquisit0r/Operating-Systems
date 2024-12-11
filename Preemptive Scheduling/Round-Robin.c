@@ -38,7 +38,8 @@ int main() {
 }
 
 void initializeProcesses(Process proc[], int n) {
-    for (int i = 0; i < n; i++) {
+	int i;
+    for (i = 0; i < n; i++) {
         proc[i].id = i + 1;
         printf("Enter arrival time and burst time for Process %d: ", proc[i].id);
         scanf("%d %d", &proc[i].arrival_time, &proc[i].burst_time);
@@ -52,11 +53,12 @@ void roundRobinScheduling(Process proc[], int n, int time_quantum) {
     int *gantt_chart = malloc(n * 100 * sizeof(int));
     int *exec_times = malloc(n * 100 * sizeof(int));
     int visited[n];
+    int i, j, idx;
     memset(visited, 0, sizeof(visited));
 
     // Sort by arrival time
-    for (int i = 0; i < n - 1; i++) {
-        for (int j = 0; j < n - i - 1; j++) {
+    for (i = 0; i < n - 1; i++) {
+        for (j = 0; j < n - i - 1; j++) {
             if (proc[j].arrival_time > proc[j + 1].arrival_time) {
                 Process temp = proc[j];
                 proc[j] = proc[j + 1];
@@ -70,7 +72,7 @@ void roundRobinScheduling(Process proc[], int n, int time_quantum) {
 
     while (completed < n) {
         if (front < rear) {
-            int idx = queue[front++];
+            idx = queue[front++];
             int exec_time = (proc[idx].remaining_time <= time_quantum) ? proc[idx].remaining_time : time_quantum;
 
             time += exec_time;
@@ -88,7 +90,7 @@ void roundRobinScheduling(Process proc[], int n, int time_quantum) {
                 completed++;
             }
 
-            for (int i = 0; i < n; i++) {
+            for (i = 0; i < n; i++) {
                 if (!visited[i] && proc[i].arrival_time <= time && proc[i].remaining_time > 0) {
                     queue[rear++] = i;
                     visited[i] = 1;
@@ -103,7 +105,7 @@ void roundRobinScheduling(Process proc[], int n, int time_quantum) {
         }
     }
 
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         proc[i].turnaround_time = proc[i].completion_time - proc[i].arrival_time;
         proc[i].waiting_time = proc[i].turnaround_time - proc[i].burst_time;
     }
@@ -116,16 +118,18 @@ void roundRobinScheduling(Process proc[], int n, int time_quantum) {
 }
 
 void displayTable(Process proc[], int n) {
+	int i;
     printf("\nProcess\tArrival Time\tBurst Time\tCompletion Time\tTurnaround Time\tWaiting Time\n");
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         printf("P%d\t%d\t\t%d\t\t%d\t\t%d\t\t%d\n", proc[i].id, proc[i].arrival_time, proc[i].burst_time, proc[i].completion_time, proc[i].turnaround_time, proc[i].waiting_time);
     }
 }
 
 void findavgTime(Process proc[], int n) {
     int total_wt = 0, total_tat = 0;
-
-    for (int i = 0; i < n; i++) {
+	int i;
+	
+    for (i = 0; i < n; i++) {
         total_wt += proc[i].waiting_time;
         total_tat += proc[i].turnaround_time;
     }
@@ -135,19 +139,20 @@ void findavgTime(Process proc[], int n) {
 }
 
 void printGanttChart(int gantt_chart[], int exec_times[], int gc_size) {
+	int i;
     printf("\nGantt Chart:\n");
 
-    for (int i = 0; i < gc_size; i++) {
+    for (i = 0; i < gc_size; i++) {
         printf(" -------");
     }
     printf("\n|");
 
-    for (int i = 0; i < gc_size; i++) {
+    for (i = 0; i < gc_size; i++) {
         printf("  P%d   |", gantt_chart[i]);
     }
     printf("\n");
 
-    for (int i = 0; i < gc_size; i++) {
+    for (i = 0; i < gc_size; i++) {
         printf(" -------");
     }
     printf("\n");
@@ -155,7 +160,7 @@ void printGanttChart(int gantt_chart[], int exec_times[], int gc_size) {
     int time = 0;
     printf("%d", time);
 
-    for (int i = 0; i < gc_size; i++) {
+    for (i = 0; i < gc_size; i++) {
         time += exec_times[i];
         printf("%8d", time);
     }

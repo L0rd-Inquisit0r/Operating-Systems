@@ -123,10 +123,6 @@ void processRequestsCSCAN(DiskCSCAN *A, int *requests, int numRequests) {
     A->requests = high;
     for (trav = &high; *trav != NULL; trav = &(*trav)->link) {}
     *trav = low;
-
-	for (temp = A->requests; temp->link != NULL; temp = temp->link) {}
-	alpha = abs(A->initialPosition - temp->request);
-	A->totalHeadMovement += alpha;
 }
 
 // Function to display the results
