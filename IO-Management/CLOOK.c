@@ -68,7 +68,7 @@ void initializeDisk(DiskCLOOK *A, int initialPosition, int diskSize) {
 void processRequestsCLOOK(DiskCLOOK *A, int *requests, int numRequests) {
     ReqNode low = NULL, high = NULL;
     ReqNode *trav, temp, node;
-    int x, curPos, highDiff, lowDiff, alpha;
+    int x, curPos, highDiff, lowDiff;
 
     // Sort requests into low and high lists
     for (x = 0; x < numRequests; x++) {
@@ -105,10 +105,6 @@ void processRequestsCLOOK(DiskCLOOK *A, int *requests, int numRequests) {
     A->requests = high;
     for (trav = &high; *trav != NULL; trav = &(*trav)->link) {}
     *trav = low;
-
-	for (temp = A->requests; temp->link != NULL; temp = temp->link) {}
-	alpha = abs(A->initialPosition - temp->request);
-	A->totalHeadMovement += alpha;
 }
 
 // Function to display the results
